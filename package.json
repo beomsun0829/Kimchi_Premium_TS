@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "ccxt": "^1.81.40"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.31"
+  }
+}

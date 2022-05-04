@@ -1,0 +1,14 @@
+{
+    "Ticker_Exception" : [
+        "XNO",
+        "XEM",
+        "WTC",
+        "AION"
+    ],
+
+    "MarketList" : {
+        "binance" : "USDT",
+        "upbit" : "KRW",
+        "bithumb" : "KRW"
+    }
+}
