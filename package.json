@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "ccxt": "^1.81.40"
+    "ccxt": "^1.81.40",
+    "ts-node": "^10.7.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.31"
