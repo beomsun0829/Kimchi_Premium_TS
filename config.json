@@ -9,7 +9,12 @@
     "MarketList" : {
         "binance" : "USDT",
         "upbit" : "KRW",
-        "bithumb" : "KRW"
+        "bithumb" : "KRW",
+        "ftx" : "USD",
+        "coinbase" : "USD",
+        "huobi" : "USDT",
+        "kucoin" : "USDT",
+        "okx" : "USDT"
     },
     
     "ExchangePair_Exception" : [

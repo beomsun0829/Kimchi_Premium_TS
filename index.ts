@@ -120,11 +120,17 @@ async function GetTickersBySymbol(){
         let tickers = Fetched_Tickers[exchange];
         for(let symbol in Symbol_List){
             if(Symbol_List[symbol].includes(exchange + "_" + MarketList[exchange])){
+
                 if(tickers[symbol + "/" + MarketList[exchange]]['close'] == 0)
                     continue;
                 
                 if(CheckExchangeTickerException(exchange, symbol))
                     continue;
+
+                if(tickers[symbol + "/" + MarketList[exchange]]['close'] == undefined){
+                    console.log("Error : failure to fetch | " + exchange + "_" + MarketList[exchange] + " : " + symbol);
+                    continue;
+                }
 
                 if(Refined_Tickers[symbol][exchange + "_" + MarketList[exchange]] == undefined)
                     Refined_Tickers[symbol][exchange + "_" + MarketList[exchange]] = tickers[symbol + "/" + MarketList[exchange]]['close'];
@@ -160,6 +166,11 @@ function CalcPremium(){
         if(CheckSymbolException(symbol))
             continue;
 
+        //debuglog(Refined_Tickers[symbol]);
+
+        if(Object.keys(Refined_Tickers[symbol]).length < 2)
+            continue;
+        
         let maxval : number = Math.max.apply(null, Object.values(Refined_Tickers[symbol]));
         let maxindex = Object.keys(Refined_Tickers[symbol]).find(key => Refined_Tickers[symbol][key] === maxval);
         let minval : number = Math.min.apply(null, Object.values(Refined_Tickers[symbol]));
