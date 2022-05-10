@@ -15,5 +15,15 @@
     "ExchangePair_Exception" : [
         ["hupbi","bithumb"],
         ["binance","bithumb"]
-    ]
+    ],
+
+    "Exchange_Ticker_Exception" : {
+        "binance" : [
+            
+        ],
+
+        "upbit" : [
+            "BTT"
+        ]
+    }
 }

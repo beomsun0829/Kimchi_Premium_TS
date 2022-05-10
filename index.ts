@@ -6,11 +6,13 @@ import config from './config.json';
 const MarketList = config.MarketList;
 const TickerException = config.Ticker_Exception;
 const ExchangePairException = config.ExchangePair_Exception;
+const ExchangeTickerException = config.Exchange_Ticker_Exception;
 
 console.log("-----------------------------------------------------");
 console.log('MarketList:', MarketList);
 console.log('Ticker Exception : ', TickerException);
 console.log('Exchange Pair Exception:', ExchangePairException);
+console.log('Exchange Ticker Exception:', ExchangeTickerException);
 
 let Fetched_Tickers = {};
 let Tickers_in_MarketList = {};
@@ -113,11 +115,15 @@ async function DeleteOneMarketSymbol(){
 async function GetTickersBySymbol(){
     for(let key in Symbol_List)
         Refined_Tickers[key] = {};
+
     for(let exchange in MarketList){
         let tickers = Fetched_Tickers[exchange];
         for(let symbol in Symbol_List){
             if(Symbol_List[symbol].includes(exchange + "_" + MarketList[exchange])){
                 if(tickers[symbol + "/" + MarketList[exchange]]['close'] == 0)
+                    continue;
+                
+                if(CheckExchangeTickerException(exchange, symbol))
                     continue;
 
                 if(Refined_Tickers[symbol][exchange + "_" + MarketList[exchange]] == undefined)
@@ -194,6 +200,15 @@ function CheckExchangePairException(exchange1, exchange2){
     return false;
 }
 
+function CheckExchangeTickerException(exchange, ticker){
+    if(ExchangeTickerException[exchange] == undefined)
+        return false;
+    
+    if(ExchangeTickerException[exchange].includes(ticker))
+        return true;
+
+    return false;
+}
 
 async function debuglog(str){
     console.log(str);
