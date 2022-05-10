@@ -10,5 +10,10 @@
         "binance" : "USDT",
         "upbit" : "KRW",
         "bithumb" : "KRW"
-    }
+    },
+    
+    "ExchangePair_Exception" : [
+        ["hupbi","bithumb"],
+        ["binance","bithumb"]
+    ]
 }

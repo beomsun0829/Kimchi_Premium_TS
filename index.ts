@@ -5,10 +5,12 @@ import config from './config.json';
 
 const MarketList = config.MarketList;
 const TickerException = config.Ticker_Exception;
+const ExchangePairException = config.ExchangePair_Exception;
 
 console.log("-----------------------------------------------------");
 console.log('MarketList:', MarketList);
 console.log('Ticker Exception : ', TickerException);
+console.log('Exchange Pair Exception:', ExchangePairException);
 
 let Fetched_Tickers = {};
 let Tickers_in_MarketList = {};
@@ -130,7 +132,7 @@ async function GetTickersBySymbol(){
 
 async function GetTetherPrice(){
     tether_price = Refined_Tickers['BTC']['upbit_KRW'] / Refined_Tickers['BTC']['binance_USDT']
-    console.log('Tether Price:', tether_price);
+    console.log('Tether Price:', tether_price.toFixed(3));
 }
 
 async function CalcKrwToTether(){
@@ -161,6 +163,9 @@ function CalcPremium(){
         //debuglog("debug : " + symbol + " : " + maxval + " : " + minval + " : " + premium);
 
 
+        if(CheckExchangePairException(minindex, maxindex))
+            continue;
+
         if(Math.abs(premium) > 5){
             console.log(symbol + " | 5% 이상 차이 " + "( " + premium.toFixed(3) + " % )" + " | " + minindex + " -> " + maxindex);
         }
@@ -178,6 +183,17 @@ function CheckSymbolException(symbol){
     else
         return false;
 }
+
+function CheckExchangePairException(exchange1, exchange2){
+    exchange1 = exchange1.split('_')[0];
+    exchange2 = exchange2.split('_')[0];
+    for(let i in ExchangePairException){
+        if(ExchangePairException[i].includes(exchange1) && ExchangePairException[i].includes(exchange2))
+            return true;
+    }
+    return false;
+}
+
 
 async function debuglog(str){
     console.log(str);
