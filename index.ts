@@ -18,6 +18,7 @@ let Fetched_Tickers = {};
 let Tickers_in_MarketList = {};
 let Symbol_List = {};
 let Refined_Tickers = {};
+let Premium_Sorter = [];
 
 let tether_price = -1;
 
@@ -38,16 +39,18 @@ async function main() {
     await DeleteOneMarketSymbol();
     await GetTickersBySymbol();
     await GetTetherPrice();
-    await CalcKrwToTether();
+    await CalcMarketToTether();
     await CalcPremium();
-
+    await SortPremium();
+    await PrintPremium();
 }
 
 async function initialize() {
     //console.log(ccxt.exchanges);
+    Premium_Sorter = [];
 
-    for (let key in MarketList) {
-        await GetTickers(key);
+    for (let index = 0; index < MarketList.length; index++) {
+        await GetTickers(MarketList[index][0]);
     }
 }
 
@@ -69,17 +72,17 @@ async function WriteAllTickers(){
 }
 
 async function GetTickersInMarketList(){
-    for(let key in MarketList){
-        let tickers = Fetched_Tickers[key];
+    for(let index = 0; index < MarketList.length; index++){
+        let tickers = Fetched_Tickers[MarketList[index][0]];
         let ticker_data = {};
         for(let ticker in tickers){
             let tickername = ticker;
             let tickermarket = tickername.split('/')[1];
-            if(tickermarket == MarketList[key]){
-                ticker_data[tickername] = Fetched_Tickers[key][ticker];
+            if(tickermarket == MarketList[index][1]){
+                ticker_data[tickername] = Fetched_Tickers[MarketList[index][0]][ticker];
             }
         }
-        Tickers_in_MarketList[key + "_" + MarketList[key]] = ticker_data;
+        Tickers_in_MarketList[MarketList[index][0] + "_" + MarketList[index][1]] = ticker_data;
     }
 }
 
@@ -88,7 +91,6 @@ async function GetSymbolList(){
         let exchange = key.split('_')[0];
         let market = key.split('_')[1];
         let market_data = Tickers_in_MarketList[key];
-
         for(let ticker in market_data){
             let ticker_data = market_data[ticker];
             let ticker_symbol = ticker_data['symbol'];
@@ -116,27 +118,29 @@ async function GetTickersBySymbol(){
     for(let key in Symbol_List)
         Refined_Tickers[key] = {};
 
-    for(let exchange in MarketList){
+    for(let index = 0; index < MarketList.length; index++){
+        let exchange = MarketList[index][0];
+        let market = MarketList[index][1];
         let tickers = Fetched_Tickers[exchange];
         for(let symbol in Symbol_List){
-            if(Symbol_List[symbol].includes(exchange + "_" + MarketList[exchange])){
+            if(Symbol_List[symbol].includes(exchange + "_" + market)){
 
-                if(tickers[symbol + "/" + MarketList[exchange]]['close'] == 0)
+                if(tickers[symbol + "/" + market]['close'] == 0)
                     continue;
                 
                 if(CheckExchangeTickerException(exchange, symbol))
                     continue;
 
-                if(tickers[symbol + "/" + MarketList[exchange]]['close'] == undefined){
-                    console.log("Error : failure to fetch | " + exchange + "_" + MarketList[exchange] + " : " + symbol);
+                if(tickers[symbol + "/" + market]['close'] == undefined){
+                    console.log("Error : failure to fetch | " + exchange + "_" + market + " : " + symbol);
                     continue;
                 }
 
-                if(Refined_Tickers[symbol][exchange + "_" + MarketList[exchange]] == undefined)
-                    Refined_Tickers[symbol][exchange + "_" + MarketList[exchange]] = tickers[symbol + "/" + MarketList[exchange]]['close'];
+                if(Refined_Tickers[symbol][exchange + "_" + market] == undefined)
+                    Refined_Tickers[symbol][exchange + "_" + market] = tickers[symbol + "/" + market]['close'];
                 
                 else
-                    Refined_Tickers[symbol][exchange + "_" + MarketList[exchange]].push(tickers[symbol + "/" + MarketList[exchange]]['close']);
+                    Refined_Tickers[symbol][exchange + "_" + market].push(tickers[symbol + "/" + market]['close']);
             }
         }
     }
@@ -147,7 +151,7 @@ async function GetTetherPrice(){
     console.log('Tether Price:', tether_price.toFixed(3));
 }
 
-async function CalcKrwToTether(){
+function CalcMarketToTether(){
     if(tether_price == -1){
         console.log('Tether Price is not found');
     }
@@ -157,6 +161,8 @@ async function CalcKrwToTether(){
             let market = index.split('_')[1];
             if(market == 'KRW')
                 Refined_Tickers[symbol][index] = Refined_Tickers[symbol][index] / tether_price;
+            if(market == 'BTC')
+                Refined_Tickers[symbol][index] = Refined_Tickers[symbol][index] * Refined_Tickers['BTC']['binance_USDT'];
         }
     }
 }
@@ -183,14 +189,25 @@ function CalcPremium(){
         if(CheckExchangePairException(minindex, maxindex))
             continue;
 
-        if(Math.abs(premium) > 5){
-            console.log(symbol + " | 5% 이상 차이 " + "( " + premium.toFixed(3) + " % )" + " | " + minindex + " -> " + maxindex);
-        }
-
-        else if(Math.abs(premium) > 3){
-            console.log(symbol + " | 3% 이상 차이 " + "( " + premium.toFixed(3) + " % )" + " | " + minindex + " -> " + maxindex);
+        if(Math.abs(premium) > 3){
+            Premium_Sorter.push([premium.toFixed(3), symbol + " | " + premium.toFixed(3) + "% | " + minindex + " -> " + maxindex])
+            //console.log(symbol + " | 5% 이상 차이 " + "( " + premium.toFixed(3) + " % )" + " | " + minindex + " -> " + maxindex);
         }
         
+    }
+    //debuglog(Premium_Sorter);
+}
+
+function SortPremium(){
+    Premium_Sorter.sort(function(a, b){
+        return b[0] - a[0];
+    }
+    );
+}
+
+function PrintPremium(){
+    for(let i = 0; i < Premium_Sorter.length; i++){
+        console.log(Premium_Sorter[i][1]);
     }
 }
 
@@ -201,11 +218,11 @@ function CheckSymbolException(symbol){
         return false;
 }
 
-function CheckExchangePairException(exchange1, exchange2){
-    exchange1 = exchange1.split('_')[0];
-    exchange2 = exchange2.split('_')[0];
+function CheckExchangePairException(fromexchange, toexchange){
+    fromexchange = fromexchange.split('_')[0];
+    toexchange = toexchange.split('_')[0];
     for(let i in ExchangePairException){
-        if(ExchangePairException[i].includes(exchange1) && ExchangePairException[i].includes(exchange2))
+        if(ExchangePairException[i][0] == fromexchange && ExchangePairException[i][1] == toexchange)
             return true;
     }
     return false;
