@@ -190,7 +190,11 @@ function CalcPremium(){
             continue;
 
         if(Math.abs(premium) > 3){
-            Premium_Sorter.push([premium.toFixed(3), symbol + " | " + premium.toFixed(3) + "% | " + minindex + " -> " + maxindex])
+            Premium_Sorter.push([
+                premium.toFixed(3), symbol +
+                " | " + premium.toFixed(3) + "% | "
+                + minindex.split("_")[0].toUpperCase()
+                + " -> " + maxindex.split("_")[0].toUpperCase()]);
             //console.log(symbol + " | 5% 이상 차이 " + "( " + premium.toFixed(3) + " % )" + " | " + minindex + " -> " + maxindex);
         }
         

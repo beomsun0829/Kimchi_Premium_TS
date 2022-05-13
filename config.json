@@ -75,7 +75,7 @@
         "BSV",
         "CTC",
         "BSV",
-        "CTC",
+        "WLUNA",
         "BSV",
         "ANC",
         "BIFI",
@@ -88,7 +88,7 @@
         "WEMIX",
         "EL",
         "DAWN",
-        "AMD"
+        "UST"
     
     ],
 
@@ -111,33 +111,63 @@
         ["huobi","ftx"],
         ["huobi","mexc"],
         ["huobi","coinbasepro"],
+        ["huobi","binance"],
+        ["huobi","upbit"],
+
+        ["okx","binance"],
+        ["okx","upbit"],
         ["okx","kucoin"],
         ["okx","ftx"],
         ["okx","mexc"],
         ["okx","huobi"],
         ["okx","coinbasepro"],
+
+
         ["ftx","kucoin"],
         ["ftx","mexc"],
         ["ftx","coinbasepro"],
         ["ftx","huobi"],
         ["ftx","okx"],
+        ["ftx","upbit"],
+
+        
         ["mexc","okx"],
         ["mexc","huobi"],
         ["mexc","kucoin"],
         ["mexc","coinbasepro"],
-        ["mexc","bithumb"],
+        ["mexc","upbit"],
+        ["mexc","ftx"],
+        ["mexc","binance"],
+
         ["bithumb","mexc"],
         ["bithumb","okx"],
         ["bithumb","kucoin"],
         ["bithumb","upbit"],
+        ["bithumb","huobi"],
+        ["bithumb","ftx"],
+        ["bithumb","coinbasepro"],
+        ["bithumb","binance"],
+
         ["kucoin","huobi"],
         ["kucoin","okx"],
         ["kucoin","ftx"],
         ["kucoin","mexc"],
+        ["kucoin","binance"],
+        ["kucoin","coinbasepro"],
+        ["kucoin","upbit"],
+
+
         ["coinbasepro","huobi"],
         ["coinbasepro","kucoin"],
         ["coinbasepro","mexc"],
-        ["coinbasepro","ftx"]
+        ["coinbasepro","ftx"],
+        ["coinbasepro","bithumb"],
+        ["coinbasepro","okx"],
+
+        ["upbit","huobi"],
+        ["upbit","kucoin"],
+        ["upbit","mexc"],
+        ["upbit","okx"]
 
 
 
@@ -147,11 +177,6 @@
     "Exchange_Ticker_Exception" : {
         "binance" : [
             "BTT",
-            "NULS",
-            "NULS",
-            "NULS",
-            "NULS",
-            "NULS",
             "NULS"
 
         ],
@@ -161,21 +186,13 @@
             "BTT",
             "GMT",
             "SOL",
-            "NULS",
-            "NULS",
             "NULS"
         ],
 
         "bithumb" : [
             "AION",
             "LUNA",
-            "BTT",
-            "BTT",
-            "BTT",
-            "BTT",
-            "BTT",
-            "BTT",
-            "BTT",
+            "SXP",
             "BTT"
 
 
