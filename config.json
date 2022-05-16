@@ -95,6 +95,7 @@
     "MarketList" : [
         ["binance", "USDT"],
         ["upbit" , "KRW"],
+        ["upbit" , "BTC"],
         ["bithumb" , "KRW"],
         ["ftx" , "USD"],
         ["huobi" , "USDT"],
@@ -146,7 +147,6 @@
         ["bithumb","huobi"],
         ["bithumb","ftx"],
         ["bithumb","coinbasepro"],
-        ["bithumb","binance"],
 
         ["kucoin","huobi"],
         ["kucoin","okx"],
@@ -177,8 +177,8 @@
     "Exchange_Ticker_Exception" : {
         "binance" : [
             "BTT",
-            "NULS"
-
+            "NULS",
+            "LUNA"
         ],
 
         "upbit" : [

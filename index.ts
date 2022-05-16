@@ -32,17 +32,23 @@ async function loop(){
 }
 
 async function main() {
-    await initialize();
-    await GetTickersInMarketList();
-    //await WriteAllTickers();
-    await GetSymbolList();
-    await DeleteOneMarketSymbol();
-    await GetTickersBySymbol();
-    await GetTetherPrice();
-    await CalcMarketToTether();
-    await CalcPremium();
-    await SortPremium();
-    await PrintPremium();
+    try{
+        await initialize();
+        await GetTickersInMarketList();
+        //await WriteAllTickers();
+        await GetSymbolList();
+        await DeleteSeveralMarkets();
+        await DeleteOneMarketSymbol();
+        await GetTickersBySymbol();
+        await GetTetherPrice();
+        await CalcMarketToTether();
+        await CalcPremium();
+        await SortPremium();
+        await PrintPremium();
+    }
+    catch(e){
+        console.log(`Error while loop : ${e}`);
+    }
 }
 
 async function initialize() {
@@ -106,7 +112,15 @@ async function GetSymbolList(){
     }
 }
 
-async function DeleteOneMarketSymbol(){
+function DeleteSeveralMarkets(){
+    for(let key in Symbol_List){
+        if(Symbol_List[key].includes('upbit_KRW') && Symbol_List[key].includes('upbit_BTC')){
+            Symbol_List[key].splice(Symbol_List[key].indexOf('upbit_BTC'), 1);
+        }
+    }
+}
+
+function DeleteOneMarketSymbol(){
     for(let key in Symbol_List){
         if(Symbol_List[key].length == 1){
             delete Symbol_List[key];
@@ -176,28 +190,33 @@ function CalcPremium(){
 
         if(Object.keys(Refined_Tickers[symbol]).length < 2)
             continue;
-        
-        let maxval : number = Math.max.apply(null, Object.values(Refined_Tickers[symbol]));
-        let maxindex = Object.keys(Refined_Tickers[symbol]).find(key => Refined_Tickers[symbol][key] === maxval);
-        let minval : number = Math.min.apply(null, Object.values(Refined_Tickers[symbol]));
-        let minindex = Object.keys(Refined_Tickers[symbol]).find(key => Refined_Tickers[symbol][key] === minval);
-        let premium : number = ((maxval / minval) - 1 ) * 100;
 
-        //debuglog("debug : " + symbol + " : " + maxval + " : " + minval + " : " + premium);
-
-
-        if(CheckExchangePairException(minindex, maxindex))
-            continue;
-
-        if(Math.abs(premium) > 3){
-            Premium_Sorter.push([
-                premium.toFixed(3), symbol +
-                " | " + premium.toFixed(3) + "% | "
-                + minindex.split("_")[0].toUpperCase()
-                + " -> " + maxindex.split("_")[0].toUpperCase()]);
-            //console.log(symbol + " | 5% 이상 차이 " + "( " + premium.toFixed(3) + " % )" + " | " + minindex + " -> " + maxindex);
+        let index = [];
+        for (let x in Refined_Tickers[symbol]){
+            index.push([x, Refined_Tickers[symbol][x]]);
         }
         
+        for(let i = 0; i < index.length; i++){
+            for(let j = 0; j < index.length; j++){
+                if(CheckExchangePairException(index[i][0].split('_')[0], index[j][0].split('_')[0]))
+                    continue;
+
+                if(index[i][0] == index[j][0])
+                    continue;
+
+                let premium = ((index[i][1] / index[j][1]) - 1) * 100;
+
+                if(premium < 0)
+                    continue;
+                
+                if(Math.abs(premium) >= 3){
+                    Premium_Sorter.push([
+                        premium.toFixed(3),
+                        `${symbol} | ${premium.toFixed(3)}% | ${index[j][0].toUpperCase()} -> ${index[i][0].toUpperCase()}`,
+                    ])
+                }
+            }
+        }
     }
     //debuglog(Premium_Sorter);
 }
