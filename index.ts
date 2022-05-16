@@ -117,6 +117,9 @@ function DeleteSeveralMarkets(){
         if(Symbol_List[key].includes('upbit_KRW') && Symbol_List[key].includes('upbit_BTC')){
             Symbol_List[key].splice(Symbol_List[key].indexOf('upbit_BTC'), 1);
         }
+        else if(Symbol_List[key].includes('binance_USDT') && Symbol_List[key].includes('binance_BTC')){
+            Symbol_List[key].splice(Symbol_List[key].indexOf('binance_BTC'), 1);
+        }
     }
 }
 

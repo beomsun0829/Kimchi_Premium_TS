@@ -94,6 +94,7 @@
 
     "MarketList" : [
         ["binance", "USDT"],
+        ["binance", "BTC"],
         ["upbit" , "KRW"],
         ["upbit" , "BTC"],
         ["bithumb" , "KRW"],
