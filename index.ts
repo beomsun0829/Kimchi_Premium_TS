@@ -120,6 +120,12 @@ function DeleteSeveralMarkets(){
         else if(Symbol_List[key].includes('binance_USDT') && Symbol_List[key].includes('binance_BTC')){
             Symbol_List[key].splice(Symbol_List[key].indexOf('binance_BTC'), 1);
         }
+        else if(Symbol_List[key].includes('binance_BUSD') && Symbol_List[key].includes('binance_USDT')){
+            Symbol_List[key].splice(Symbol_List[key].indexOf('binance_USDT'), 1);
+        }
+        else if(Symbol_List[key].includes('binance_USDT') && Symbol_List[key].includes('binance_BUSD')){
+            Symbol_List[key].splice(Symbol_List[key].indexOf('binance_BUSD'), 1);
+        }
     }
 }
 
