@@ -117,14 +117,14 @@ function DeleteSeveralMarkets(){
         if(Symbol_List[key].includes('upbit_KRW') && Symbol_List[key].includes('upbit_BTC')){
             Symbol_List[key].splice(Symbol_List[key].indexOf('upbit_BTC'), 1);
         }
-        else if(Symbol_List[key].includes('binance_USDT') && Symbol_List[key].includes('binance_BTC')){
+        if(Symbol_List[key].includes('binance_USDT') && Symbol_List[key].includes('binance_BTC')){
             Symbol_List[key].splice(Symbol_List[key].indexOf('binance_BTC'), 1);
         }
-        else if(Symbol_List[key].includes('binance_BUSD') && Symbol_List[key].includes('binance_USDT')){
-            Symbol_List[key].splice(Symbol_List[key].indexOf('binance_USDT'), 1);
-        }
-        else if(Symbol_List[key].includes('binance_USDT') && Symbol_List[key].includes('binance_BUSD')){
+        if(Symbol_List[key].includes('binance_BUSD') && Symbol_List[key].includes('binance_USDT')){
             Symbol_List[key].splice(Symbol_List[key].indexOf('binance_BUSD'), 1);
+        }
+        if(Symbol_List[key].includes('binance_BUSD') && Symbol_List[key].includes('binance_BTC')){
+            Symbol_List[key].splice(Symbol_List[key].indexOf('binance_BTC'), 1);
         }
     }
 }
@@ -218,10 +218,9 @@ function CalcPremium(){
                 if(premium < 0)
                     continue;
                 
-                if(Math.abs(premium) >= 3){
+                if(Math.abs(premium) >= 5){
                     Premium_Sorter.push([
-                        premium.toFixed(3),
-                        `${symbol} | ${premium.toFixed(3)}% | ${index[j][0].toUpperCase()} -> ${index[i][0].toUpperCase()}`,
+                        premium.toFixed(3), symbol, index[j][0].toUpperCase(), index[i][0].toUpperCase()
                     ])
                 }
             }
@@ -239,7 +238,7 @@ function SortPremium(){
 
 function PrintPremium(){
     for(let i = 0; i < Premium_Sorter.length; i++){
-        console.log(Premium_Sorter[i][1]);
+        console.log((Premium_Sorter[i][0] + "%").padEnd(10) + Premium_Sorter[i][1].padEnd(8) + Premium_Sorter[i][2].padEnd(18) + Premium_Sorter[i][3]);
     }
 }
 

@@ -88,7 +88,8 @@
         "WEMIX",
         "EL",
         "DAWN",
-        "UST"
+        "UST",
+        "LUNA"
     
     ],
 
@@ -188,7 +189,12 @@
             "BTT",
             "GMT",
             "SOL",
-            "NULS"
+            "NULS",
+            "DENT",
+            "ARPA",
+            "FIL",
+            "RNDR",
+            "BASIC"
         ],
 
         "bithumb" : [
