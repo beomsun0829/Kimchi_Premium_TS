@@ -1,5 +1,11 @@
 const ccxt = require('ccxt');
 const fs = require('fs');
+require('dotenv').config();
+
+const TelegramBot = require('node-telegram-bot-api');
+
+const token = process.env.TELEGRAM_TOKEN;
+const bot = new TelegramBot(token, {polling: true});
 
 import config from './config.json';
 
@@ -171,7 +177,7 @@ async function GetTickersBySymbol(){
 
 async function GetTetherPrice(){
     tether_price = Refined_Tickers['BTC']['upbit_KRW'] / Refined_Tickers['BTC']['binance_USDT']
-    console.log('Tether Price:', tether_price.toFixed(3));
+    console.log('Tether Price  : ', tether_price.toFixed(3));
 }
 
 function CalcMarketToTether(){
@@ -218,7 +224,7 @@ function CalcPremium(){
                 if(premium < 0)
                     continue;
                 
-                if(Math.abs(premium) >= 5){
+                if(Math.abs(premium) >= 3){
                     Premium_Sorter.push([
                         premium.toFixed(3), symbol, index[j][0].toUpperCase(), index[i][0].toUpperCase()
                     ])
@@ -237,9 +243,15 @@ function SortPremium(){
 }
 
 function PrintPremium(){
+    let output = "";
     for(let i = 0; i < Premium_Sorter.length; i++){
         console.log((Premium_Sorter[i][0] + "%").padEnd(10) + Premium_Sorter[i][1].padEnd(8) + Premium_Sorter[i][2].padEnd(18) + Premium_Sorter[i][3]);
+        output += `${Premium_Sorter[i][1]}(${Premium_Sorter[i][0]}%) | ${Premium_Sorter[i][2].split('_')[0]} -> ${Premium_Sorter[i][3].split('_')[0]} \n`;
     }
+    if(output == "")
+        return;
+    output += `Tether Price : ${tether_price.toFixed(3)}`;
+    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, output);
 }
 
 function CheckSymbolException(symbol){

@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "ccxt": "^1.81.40",
+    "dotenv": "^16.0.1",
+    "node-telegram-bot-api": "^0.57.0",
     "ts-node": "^10.7.0"
   },
   "devDependencies": {
