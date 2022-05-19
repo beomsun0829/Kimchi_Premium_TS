@@ -2,23 +2,28 @@ const ccxt = require('ccxt');
 const fs = require('fs');
 require('dotenv').config();
 
-const TelegramBot = require('node-telegram-bot-api');
-
-const token = process.env.TELEGRAM_TOKEN;
-const bot = new TelegramBot(token, {polling: true});
-
 import config from './config.json';
 
+const Use_Telegram = config.Use_Telegram;
 const MarketList = config.MarketList;
 const TickerException = config.Ticker_Exception;
 const ExchangePairException = config.ExchangePair_Exception;
 const ExchangeTickerException = config.Exchange_Ticker_Exception;
 
+const TelegramBot = require('node-telegram-bot-api');
+const token = process.env.TELEGRAM_TOKEN;
+let bot = undefined;
+
+if(Use_Telegram){
+    bot =  new TelegramBot(token, {polling: true});
+}
+
 console.log("-----------------------------------------------------");
 console.log('MarketList:', MarketList);
-console.log('Ticker Exception : ', TickerException);
-console.log('Exchange Pair Exception:', ExchangePairException);
-console.log('Exchange Ticker Exception:', ExchangeTickerException);
+console.log('Ticker Exception :', TickerException);
+console.log('Exchange Pair Exception :', ExchangePairException);
+console.log('Exchange Ticker Exception :', ExchangeTickerException);
+console.log('Telegram :', Use_Telegram);
 
 let Fetched_Tickers = {};
 let Tickers_in_MarketList = {};
@@ -213,7 +218,7 @@ function CalcPremium(){
         
         for(let i = 0; i < index.length; i++){
             for(let j = 0; j < index.length; j++){
-                if(CheckExchangePairException(index[i][0].split('_')[0], index[j][0].split('_')[0]))
+                if(CheckExchangePairException(index[j][0], index[i][0]))
                     continue;
 
                 if(index[i][0] == index[j][0])
@@ -248,10 +253,13 @@ function PrintPremium(){
         console.log((Premium_Sorter[i][0] + "%").padEnd(10) + Premium_Sorter[i][1].padEnd(8) + Premium_Sorter[i][2].padEnd(18) + Premium_Sorter[i][3]);
         output += `${Premium_Sorter[i][1]}(${Premium_Sorter[i][0]}%) | ${Premium_Sorter[i][2].split('_')[0]} -> ${Premium_Sorter[i][3].split('_')[0]} \n`;
     }
+    
     if(output == "")
         return;
+
     output += `Tether Price : ${tether_price.toFixed(3)}`;
-    bot.sendMessage(process.env.TELEGRAM_CHAT_ID, output);
+    if(Use_Telegram)
+        bot.sendMessage(process.env.TELEGRAM_CHAT_ID, output);
 }
 
 function CheckSymbolException(symbol){
@@ -262,8 +270,12 @@ function CheckSymbolException(symbol){
 }
 
 function CheckExchangePairException(fromexchange, toexchange){
+    if(fromexchange == "upbit_BTC")
+        return true;
+
     fromexchange = fromexchange.split('_')[0];
     toexchange = toexchange.split('_')[0];
+
     for(let i in ExchangePairException){
         if(ExchangePairException[i][0] == fromexchange && ExchangePairException[i][1] == toexchange)
             return true;
