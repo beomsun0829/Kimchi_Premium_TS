@@ -2,96 +2,23 @@
     "Use_Telegram" : false,
     "Ticker_Exception" : [
         "XNO",
-        "BTT",
-        "XEC",
-        "KEY", 
-        "ACM",
-        "MM",
-        "TRV",
-        "META",
-        "CITY",
-        "APIX",
-        "SYN",
-        "CRPT",
         "SPRT",
-        "DFA",
-        "GO", 
-        "NFT",
-        "WICC",
         "VSYS",
-        "CWD",
-        "WOZX",
-        "DVI",
-        "ADP",
-        "GOM2",
-        "CENNZ",
-        "APM",
-        "WOM",
-        "FX",
-        "MEV",
-        "MIX",
-        "VALOR",
-        "ATOLO",
-        "MVL",
-        "NPT",
-        "WTC",
-        "ORC",
-        "FCT2",
-        "AQT",
-        "PLU",
-        "TITAN",
-        "QKC",
-        "BURGER",
-        "BFC",
-        "SOFI",
-        "UPI",
-        "BTG",
-        "ELF",
-        "DKA",
+        "ANV",
+        "META",
         "SCRT",
-        "BOA",
-        "DOCK",
-        "FIS",
-        "SWAP",
-        "TMTG",
-        "STX",
-        "CRE",
-        "FOX",
-        "ANW",
-        "BLY",
-        "DIA",
-        "VELO",
-        "INV",
-        "CTC",
-        "BSV",
-        "AIOZ",
-        "CKB",
-        "ASM",
-        "BSV",
-        "CTC",
-        "BSV",
-        "CTC",
-        "BSV",
-        "CTC",
-        "BSV",
-        "CTC",
-        "BSV",
-        "WLUNA",
-        "BSV",
-        "ANC",
-        "BIFI",
-        "LSK",
-        "AR",
-        "SC",
-        "CTXC",
-        "MAP",
-        "STEEM",
-        "WEMIX",
-        "EL",
-        "DAWN",
+        "ANV",
+        "HNT",
+        "DENT",
+        "BURGER",
+        "XEC",
+        "TITAN",
         "UST",
-        "LUNA"
-    
+        "BTT",
+        "NFT",
+        "GAS",
+        "CITY",
+        "KEY"
     ],
 
     "MarketList" : [
@@ -104,10 +31,8 @@
         ["ftx" , "USD"],
         ["huobi" , "USDT"],
         ["kucoin" , "USDT"],
-        ["okx" , "USDT"],
-        ["mexc" , "USDT"],
-        ["coinbasepro" , "USDT"],
-        ["coinbasepro" , "BTC"]
+        ["coinbasepro" , "USD"]
+
     ],
     
     "ExchangePair_Exception" : [
@@ -127,14 +52,11 @@
         ["okx","huobi"],
         ["okx","coinbasepro"],
 
-
         ["ftx","kucoin"],
         ["ftx","mexc"],
         ["ftx","coinbasepro"],
         ["ftx","huobi"],
         ["ftx","okx"],
-        ["ftx","upbit"],
-
         
         ["mexc","okx"],
         ["mexc","huobi"],
@@ -142,7 +64,6 @@
         ["mexc","coinbasepro"],
         ["mexc","upbit"],
         ["mexc","ftx"],
-        ["mexc","binance"],
 
         ["bithumb","mexc"],
         ["bithumb","okx"],
@@ -165,16 +86,7 @@
         ["coinbasepro","kucoin"],
         ["coinbasepro","mexc"],
         ["coinbasepro","ftx"],
-        ["coinbasepro","bithumb"],
-        ["coinbasepro","okx"],
-
-        ["upbit","huobi"],
-        ["upbit","kucoin"],
-        ["upbit","mexc"],
-        ["upbit","okx"]
-
-
-
+        ["coinbasepro","okx"]
 
     ],
 
@@ -186,109 +98,48 @@
         ],
 
         "upbit" : [
-            "XRP",
-            "BTT",
-            "GMT",
-            "SOL",
-            "NULS",
-            "DENT",
-            "ARPA",
-            "FIL",
-            "RNDR",
-            "BASIC"
+            "BTT"
+
         ],
 
         "bithumb" : [
-            "AION",
+            "BTT",
             "LUNA",
-            "SXP",
+            "VSYS",
+            "BTT",
             "BTT"
-
-
         ],
+
         "okx" : [
-            "PCI",
-            "ARK",
-            "AERGO",
-            "VRA",
-            "CVP"
+            "BTT"
         ],
+
         "kucoin" : [
-            "DEGO",
-            "HNT",
-            "EPS",
-            "BOBA",
-            "MLK",
-            "GHST",
-            "BASIC",
-            "MXC",
-            "KMD",
-            "CKB",
-            "SCRT",
-            "NULS",
-            "UNFI",
-            "ADX",
-            "SXP",
-            "REQ",
-            "BETA"
+            "BTT"
             
         ],
+
         "huobi" : [
-            "EFI",
-            "RLY",
-            "LOOM",
-            "NBS",
-            "WEMIX",
-            "SCRT",
-            "XYO",
-            "SUPER",
-            "UNFI",
-            "IDEX",
-            "REQ",
-            "STPT",
-            "UST",
-            "IDEX",
-            "IDEX",
-            "IDEX",
-            "IDEX",
-            "IDEX",
-            "BLZ"
-            
+            "BTT",
+            "SCRT"
         ],
+        
         "ftx" : [
-            "XRP"
+            "BTT"
 
         ],
         "mexc" : [
-            "GFI",
-            "SSX",
-            "ASM",
-            "DBI",
-            "ARK",
-            "AERGO",
-            "GAS",
+            "AMB",
+            "META",
             "QI",
-            "MXC",
-            "VRA",
-            "LUNA",
-            "UST",
-            "DAO",
-            "D"
+            "BTT"
         ],
+
         "coinbasepro" : [
+            "BTT",
+            "UST",
             "IOTX",
-            "YFII",
-            "DIA",
-            "AERGO",
-            "PLA",
-            "JASMY",
-            "GODS",
-            "GST",
-            "TRIBE",
-            "REP",
-            "SNT",
-            "GMT",
-            "ACH"
+            "BTT"
         ]
 
     }

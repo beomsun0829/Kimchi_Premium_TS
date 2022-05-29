@@ -5,6 +5,7 @@ require('dotenv').config();
 import config from './config.json';
 
 const Use_Telegram = config.Use_Telegram;
+const Use_CheckWithdrawable = true;
 const MarketList = config.MarketList;
 const TickerException = config.Ticker_Exception;
 const ExchangePairException = config.ExchangePair_Exception;
@@ -25,6 +26,7 @@ console.log('Exchange Pair Exception :', ExchangePairException);
 console.log('Exchange Ticker Exception :', ExchangeTickerException);
 console.log('Telegram :', Use_Telegram);
 
+let Market_Data = {};
 let Fetched_Tickers = {};
 let Tickers_in_MarketList = {};
 let Symbol_List = {};
@@ -43,6 +45,22 @@ async function loop(){
 }
 
 async function main() {
+    await initialize();
+    await GetTickersInMarketList();
+    //await WriteAllTickers();
+    await GetSymbolList();
+    await DeleteSeveralMarkets();
+    await DeleteOneMarketSymbol();
+    await GetTickersBySymbol();
+    await GetTetherPrice();
+    await CalcMarketToTether();
+    await CalcPremium();
+    await SortPremium();
+    await PrintPremium();
+    
+    //CheckWithdrawable('binance','BTC/USDT');
+
+    /*
     try{
         await initialize();
         await GetTickersInMarketList();
@@ -59,15 +77,27 @@ async function main() {
     }
     catch(e){
         console.log(`Error while loop : ${e}`);
+        if(e == 'TypeError: Cannot read property \'close\' of undefined'){
+            console.log(Fetched_Tickers)
+        }
     }
+    */
 }
 
 async function initialize() {
-    //console.log(ccxt.exchanges);
+    Market_Data = {};
+    Fetched_Tickers = {};
+    Tickers_in_MarketList = {};
+    Symbol_List = {};
+    Refined_Tickers = {};
     Premium_Sorter = [];
 
     for (let index = 0; index < MarketList.length; index++) {
-        await GetTickers(MarketList[index][0]);
+        if(Fetched_Tickers[MarketList[index][0]] == undefined){
+            await GetTickers(MarketList[index][0]);
+            if(Use_CheckWithdrawable)                                                //use Withdrawable Checker (Slow speed)
+                await GetMarkets(MarketList[index][0]);
+        }
     }
 }
 
@@ -159,22 +189,30 @@ async function GetTickersBySymbol(){
         for(let symbol in Symbol_List){
             if(Symbol_List[symbol].includes(exchange + "_" + market)){
 
-                if(tickers[symbol + "/" + market]['close'] == 0)
+                try{
+                    if(tickers[symbol + "/" + market]['close'] == undefined){
+                        console.log("Error : failure to fetch | " + exchange + "_" + market + " : " + symbol);
+                        continue;
+                    }
+                }
+                catch(e){
+                    console.log("Error : failure to fetch | " + exchange + "_" + market + " : " + symbol);
                     continue;
+                }
+
                 
                 if(CheckExchangeTickerException(exchange, symbol))
                     continue;
 
-                if(tickers[symbol + "/" + market]['close'] == undefined){
-                    console.log("Error : failure to fetch | " + exchange + "_" + market + " : " + symbol);
+                if(tickers[symbol + "/" + market]['close'] == 0)
                     continue;
-                }
 
                 if(Refined_Tickers[symbol][exchange + "_" + market] == undefined)
                     Refined_Tickers[symbol][exchange + "_" + market] = tickers[symbol + "/" + market]['close'];
                 
                 else
                     Refined_Tickers[symbol][exchange + "_" + market].push(tickers[symbol + "/" + market]['close']);
+                    
             }
         }
     }
@@ -229,10 +267,17 @@ function CalcPremium(){
                 if(premium < 0)
                     continue;
                 
-                if(Math.abs(premium) >= 3){
-                    Premium_Sorter.push([
-                        premium.toFixed(3), symbol, index[j][0].toUpperCase(), index[i][0].toUpperCase()
-                    ])
+                if(Math.abs(premium) >= 3.5){
+                    if(Use_CheckWithdrawable){
+                        Premium_Sorter.push([
+                            premium.toFixed(3), symbol, index[j][0].toUpperCase(), index[i][0].toUpperCase(), index[j][1].toFixed(5), index[i][1].toFixed(5), CheckWithdrawable(index[j][0].split('_')[0], symbol), CheckWithdrawable(index[i][0].split('_')[0], symbol)
+                        ])
+                    }
+                    else{
+                        Premium_Sorter.push([
+                            premium.toFixed(3), symbol, index[j][0].toUpperCase(), index[i][0].toUpperCase(), index[j][1].toFixed(5), index[i][1].toFixed(5)
+                        ])
+                    }
                 }
             }
         }
@@ -250,8 +295,26 @@ function SortPremium(){
 function PrintPremium(){
     let output = "";
     for(let i = 0; i < Premium_Sorter.length; i++){
-        console.log((Premium_Sorter[i][0] + "%").padEnd(10) + Premium_Sorter[i][1].padEnd(8) + Premium_Sorter[i][2].padEnd(18) + Premium_Sorter[i][3]);
-        output += `${Premium_Sorter[i][1]}(${Premium_Sorter[i][0]}%) | ${Premium_Sorter[i][2].split('_')[0]} -> ${Premium_Sorter[i][3].split('_')[0]} \n`;
+        if(Use_CheckWithdrawable){
+            console.log((Premium_Sorter[i][0] + "%").padEnd(10)
+            + Premium_Sorter[i][1].padEnd(8)
+            + Premium_Sorter[i][2].padEnd(20)
+            + Premium_Sorter[i][3].padEnd(20)
+            + Premium_Sorter[i][4].padEnd(15)
+            + Premium_Sorter[i][5].padEnd(15)
+            + `Deposit, Withdraw : ${String(Premium_Sorter[i][6])}`.padEnd(40)
+            + String(Premium_Sorter[i][7]).padEnd(7));
+        }
+
+        else{
+            console.log((Premium_Sorter[i][0] + "%").padEnd(10)
+            + Premium_Sorter[i][1].padEnd(8)
+            + Premium_Sorter[i][2].padEnd(20)
+            + Premium_Sorter[i][3].padEnd(20)
+            + Premium_Sorter[i][4].padEnd(15)
+            + Premium_Sorter[i][5].padEnd(15));
+        }
+        output += `${Premium_Sorter[i][1]}(${Premium_Sorter[i][0]}%) | ${Premium_Sorter[i][2].split('_')[0]} -> ${Premium_Sorter[i][3].split('_')[0]}\n`;
     }
     
     if(output == "")
@@ -291,6 +354,37 @@ function CheckExchangeTickerException(exchange, ticker){
         return true;
 
     return false;
+}
+
+async function GetMarkets(key){
+    try{
+        const exchange = new ccxt[key]();
+        const markets = await exchange.fetchCurrencies();
+        Market_Data[key] = markets;
+    }
+    catch(e){
+        console.log('Get markets Error:', e);
+    }
+}
+
+function CheckWithdrawable(exchange, symbol){
+    symbol = symbol.toUpperCase();
+    const nowdata = Market_Data[exchange];
+    try{
+        if(exchange == 'binance' || exchange == 'upbit' || exchange == 'bithumb'){
+            return ['x', 'x'];
+        }
+        
+        else{
+            return [nowdata[symbol]['deposit'], nowdata[symbol]['withdraw']];
+        }
+    }
+    catch(e){
+        console.log(`${exchange} ${symbol} withdrawable check error:`, e);
+        console.log(nowdata);
+        return ['-', '-'];
+    }
+    
 }
 
 async function debuglog(str){
