@@ -18,7 +18,8 @@
         "NFT",
         "GAS",
         "CITY",
-        "KEY"
+        "KEY",
+        "LUNA"
     ],
 
     "MarketList" : [
@@ -31,8 +32,8 @@
         ["ftx" , "USD"],
         ["huobi" , "USDT"],
         ["kucoin" , "USDT"],
-        ["coinbasepro" , "USD"]
-
+        ["coinbasepro" , "USD"],
+        ["kraken", "USD"]
     ],
     
     "ExchangePair_Exception" : [

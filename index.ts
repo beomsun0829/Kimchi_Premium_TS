@@ -57,8 +57,6 @@ async function main() {
     await CalcPremium();
     await SortPremium();
     await PrintPremium();
-    
-    //CheckWithdrawable('binance','BTC/USDT');
 
     /*
     try{
@@ -91,6 +89,7 @@ async function initialize() {
     Symbol_List = {};
     Refined_Tickers = {};
     Premium_Sorter = [];
+    tether_price = -1;
 
     for (let index = 0; index < MarketList.length; index++) {
         if(Fetched_Tickers[MarketList[index][0]] == undefined){
@@ -104,7 +103,14 @@ async function initialize() {
 async function GetTickers(key){
     try{
         const exchange = new ccxt[key]();
-        const tickers = await exchange.fetch_tickers();
+        let tickers;
+
+        if(key == 'kraken')
+            tickers = await exchange.fetchTickers(await GetTickersFromKraken(exchange));
+        
+        else
+            tickers = await exchange.fetch_tickers();
+
         Fetched_Tickers[key] = tickers;
     }
     catch(e){
@@ -116,6 +122,17 @@ async function WriteAllTickers(){
     let file = './tickers.json'
     let data = JSON.stringify(Tickers_in_MarketList, null, 2);
     fs.writeFileSync(file, data);
+}
+
+async function GetTickersFromKraken(exchange){
+    let krakenmarket = await exchange.loadMarkets();
+    let kraken_tickers = [];
+    for(let i in krakenmarket){
+        if(i.split('/')[1] == 'USD'){
+            kraken_tickers.push(i);
+        }
+    }
+    return kraken_tickers;
 }
 
 async function GetTickersInMarketList(){
@@ -302,7 +319,7 @@ function PrintPremium(){
             + Premium_Sorter[i][3].padEnd(20)
             + Premium_Sorter[i][4].padEnd(15)
             + Premium_Sorter[i][5].padEnd(15)
-            + `Deposit, Withdraw : ${String(Premium_Sorter[i][6])}`.padEnd(40)
+            + `Deposit, Withdraw : ${String(Premium_Sorter[i][6])}`.padEnd(30)
             + String(Premium_Sorter[i][7]).padEnd(7));
         }
 
@@ -391,12 +408,3 @@ async function debuglog(str){
     console.log(str);
 }
 
-
-/*
-let exchange = new ccxt['binance']();
-exchange.fetchTicker('BTC/USDT').then(ticker => {
-    console.log('binance', ticker);
-}).catch(err => {
-    console.log(err);
-});
-*/
