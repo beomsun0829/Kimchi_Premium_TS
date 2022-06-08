@@ -106,7 +106,7 @@ async function GetTickers(key){
         let tickers;
 
         if(key == 'kraken')
-            tickers = await exchange.fetchTickers(await GetTickersFromKraken(exchange));
+            tickers = await exchange.fetch_tickers(await GetTickersFromKraken(exchange));
         
         else
             tickers = await exchange.fetch_tickers();
@@ -287,7 +287,7 @@ function CalcPremium(){
                 if(Math.abs(premium) >= 3.5){
                     if(Use_CheckWithdrawable){
                         Premium_Sorter.push([
-                            premium.toFixed(3), symbol, index[j][0].toUpperCase(), index[i][0].toUpperCase(), index[j][1].toFixed(5), index[i][1].toFixed(5), CheckWithdrawable(index[j][0].split('_')[0], symbol), CheckWithdrawable(index[i][0].split('_')[0], symbol)
+                            premium.toFixed(3), symbol, index[j][0].toUpperCase(), index[i][0].toUpperCase(), index[j][1].toFixed(5), index[i][1].toFixed(5), CheckWithdrawable(index[j][0].split('_')[0], symbol, 'withdraw'), CheckWithdrawable(index[i][0].split('_')[0], symbol, 'deposit')
                         ])
                     }
                     else{
@@ -319,8 +319,8 @@ function PrintPremium(){
             + Premium_Sorter[i][3].padEnd(20)
             + Premium_Sorter[i][4].padEnd(15)
             + Premium_Sorter[i][5].padEnd(15)
-            + `Deposit, Withdraw : ${String(Premium_Sorter[i][6])}`.padEnd(30)
-            + String(Premium_Sorter[i][7]).padEnd(7));
+            + Premium_Sorter[i][6].padEnd(10)
+            + Premium_Sorter[i][7].padEnd(10));
         }
 
         else{
@@ -376,6 +376,12 @@ function CheckExchangeTickerException(exchange, ticker){
 async function GetMarkets(key){
     try{
         const exchange = new ccxt[key]();
+
+        if(key == 'binance' || key == 'upbit'){
+            exchange.apiKey = process.env[key.toUpperCase() + '_ACCESS_KEY'];
+            exchange.secret = process.env[key.toUpperCase() + '_SECRET_KEY'];
+        }
+        
         const markets = await exchange.fetchCurrencies();
         Market_Data[key] = markets;
     }
@@ -384,24 +390,26 @@ async function GetMarkets(key){
     }
 }
 
-function CheckWithdrawable(exchange, symbol){
+function CheckWithdrawable(exchange, symbol, type){
     symbol = symbol.toUpperCase();
     const nowdata = Market_Data[exchange];
+
+    if(exchange == 'bithumb'){
+        return 'x';
+    }
+
     try{
-        if(exchange == 'binance' || exchange == 'upbit' || exchange == 'bithumb'){
-            return ['x', 'x'];
-        }
-        
-        else{
-            return [nowdata[symbol]['deposit'], nowdata[symbol]['withdraw']];
-        }
+        if(nowdata[symbol][type] == undefined)
+            return '-';
+
+        else
+            return String(nowdata[symbol][type]);
     }
+
     catch(e){
-        console.log(`${exchange} ${symbol} withdrawable check error:`, e);
-        console.log(nowdata);
-        return ['-', '-'];
+        return 'Err';
     }
-    
+ 
 }
 
 async function debuglog(str){
