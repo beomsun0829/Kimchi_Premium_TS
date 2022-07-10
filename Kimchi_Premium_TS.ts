@@ -284,7 +284,7 @@ function CalcPremium(){
                 if(premium < 0)
                     continue;
                 
-                if(Math.abs(premium) >= 3.5){
+                if(Math.abs(premium) >= 4){
                     if(Use_CheckWithdrawable){
                         Premium_Sorter.push([
                             premium.toFixed(3), symbol, index[j][0].toUpperCase(), index[i][0].toUpperCase(), index[j][1].toFixed(5), index[i][1].toFixed(5), CheckWithdrawable(index[j][0].split('_')[0], symbol, 'withdraw'), CheckWithdrawable(index[i][0].split('_')[0], symbol, 'deposit')

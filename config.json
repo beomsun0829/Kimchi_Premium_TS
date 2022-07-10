@@ -1,5 +1,5 @@
 {
-    "Use_Telegram" : false,
+    "Use_Telegram" : true,
     "Ticker_Exception" : [
         "XNO",
         "SPRT",
